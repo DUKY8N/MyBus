@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="지역" >
+        <item>경주</item>
+        <item>김포</item>
+        <item>울산</item>
+    </string-array>
+</resources>

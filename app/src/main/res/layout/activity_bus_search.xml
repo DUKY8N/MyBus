@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".BusSearch">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -13,11 +13,20 @@
         android:background="#A6A6A6"
         app:layout_constraintTop_toTopOf="parent">
 
+        <Spinner
+            android:id="@+id/spinner"
+            android:entries="@array/지역"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="#FFE57F"
+            tools:layout_editor_absoluteX="1dp"
+            tools:layout_editor_absoluteY="23dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/title_name"
+            android:text="버스검색"
             android:textSize="25dp"
             android:textStyle="bold" />
 
@@ -65,6 +74,7 @@
         app:layout_constraintEnd_toEndOf="@+id/fab"
         app:pressedTranslationZ="12dp" />
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -84,6 +94,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.972" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
