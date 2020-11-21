@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        overridePendingTransition(0,0);
 
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
@@ -89,5 +90,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             fab3.setClickable(true);
             isFabOpen = true;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        overridePendingTransition(0,0);
     }
 }
