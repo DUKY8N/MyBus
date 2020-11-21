@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".BusStopSearch">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#A6A6A6"
+        android:background="@drawable/layout_shape"
         app:layout_constraintTop_toTopOf="parent">
 
         <Spinner
@@ -18,17 +19,28 @@
             android:entries="@array/지역"
             android:layout_width="70dp"
             android:layout_height="40dp"
-            android:background="#FFE57F"
+            android:layout_marginLeft="55dp"
+            android:textStyle="bold"
+            android:textSize="15dp"
+            android:background="@drawable/spinner_shape"
             tools:layout_editor_absoluteX="1dp"
             tools:layout_editor_absoluteY="23dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="정류장검색"
-            android:textSize="25dp"
-            android:textStyle="bold" />
+        <EditText
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:background="@drawable/edittext_shape"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text="@string/search_name"
+            android:textSize="16dp"
+            android:background="@drawable/button_round"
+            tools:layout_editor_absoluteX="307dp"
+            tools:layout_editor_absoluteY="6dp" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -38,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="#FFFFBB"
+        android:backgroundTint="#B7F0B1"
         android:src="@drawable/star_icon"
         android:visibility="invisible"
         app:elevation="6dp"
@@ -66,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="#FFFFBB"
+        android:backgroundTint="#FFBBA5"
         android:src="@drawable/bus_stop_icon"
         android:visibility="invisible"
         app:elevation="6dp"

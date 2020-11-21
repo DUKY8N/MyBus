@@ -50,6 +50,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 Toast.makeText(this, "Button1", Toast.LENGTH_SHORT).show();
+                finish();
                 break;
             case R.id.fab2:
                 anim();
@@ -57,6 +58,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent2);
                 Toast.makeText(this, "Button2", Toast.LENGTH_SHORT).show();
+                finish();
                 break;
             case R.id.fab3:
                 anim();
@@ -64,6 +66,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 intent3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent3);
                 Toast.makeText(this, "Button3", Toast.LENGTH_SHORT).show();
+                finish();
                 break;
         }
     }
