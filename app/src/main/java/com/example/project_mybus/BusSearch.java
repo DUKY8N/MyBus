@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,14 +30,20 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 public class BusSearch extends AppCompatActivity implements View.OnClickListener {
+
+    String serviceKey = "%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D";
+    int cityCode = 25;
+    int routeNo = 5;
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
     private FloatingActionButton fab, fab1, fab2, fab3;
 
     Document doc;
-    String test = "";
     LinearLayout dynamicLayout;
 
     @Override
@@ -66,7 +73,10 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         protected Document doInBackground(String... urls) {
             URL url;
             try {
-                url = new URL("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteNoList?serviceKey=%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D&cityCode=25&routeNo=5");
+                url = new URL("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteNoList"+
+                        "?serviceKey=" + serviceKey +
+                        "&cityCode="+ cityCode +
+                        "&routeNo=" + routeNo);
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 doc = db.parse(new InputSource(url.openStream()));
@@ -103,10 +113,11 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
 
     public void AddText(String s) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 2.0f);
-        param.width = 950;
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 2.0f);
+        param.width = MATCH_PARENT;
         param.height = 250;
         param.leftMargin = 50;
+        param.rightMargin = 50;
         param.topMargin = 40;
         param.bottomMargin = 10;
         TextView newTextView = new TextView(this);
@@ -119,6 +130,13 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         dynamicHori.setLayoutParams(param);
         dynamicHori.addView(newTextView);
         dynamicLayout.addView(dynamicHori);
+    }
+
+    public void SearchBus (View v) {
+        EditText searchEditText = (EditText)findViewById(R.id.search);
+        routeNo = Integer.parseInt(searchEditText.getText().toString());
+        new GetXMLTask().execute();
+        Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -148,7 +166,6 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 break;
         }
     }
-
 
     private void anim() {
         if (isFabOpen) {

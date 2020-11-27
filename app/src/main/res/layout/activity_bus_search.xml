@@ -27,18 +27,21 @@
             tools:layout_editor_absoluteY="23dp" />
 
         <EditText
+            android:id="@+id/search"
             android:layout_width="170dp"
             android:layout_height="40dp"
             android:background="@drawable/edittext_shape"
+            android:inputType="number"
             android:gravity="center" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/search_button"
             android:layout_width="60dp"
             android:layout_height="40dp"
             android:text="@string/search_name"
             android:textSize="16dp"
             android:background="@drawable/button_round"
+            android:onClick="SearchBus"
             tools:layout_editor_absoluteX="307dp"
             tools:layout_editor_absoluteY="6dp" />
 
