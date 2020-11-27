@@ -43,14 +43,12 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
         switch (id) {
             case R.id.fab:
                 anim();
-                Toast.makeText(this, "Floating Action Button", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.fab1:
                 anim();
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
-                Toast.makeText(this, "Button1", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
             case R.id.fab2:
@@ -58,16 +56,11 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
                 Intent intent2 = new Intent(this, BusSearch.class);
                 intent2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent2);
-                Toast.makeText(this, "Button2", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
             case R.id.fab3:
                 anim();
-                Intent intent3 = new Intent(this, BusStopSearch.class);
-                intent3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent3);
-                Toast.makeText(this, "Button3", Toast.LENGTH_SHORT).show();
-                finish();
+                Toast.makeText(getApplicationContext(), "현재화면 입니다.", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

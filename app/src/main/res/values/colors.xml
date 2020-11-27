@@ -6,4 +6,5 @@
     <color name="color_search">#98C593</color>
     <color name="color_stroke">#98C593</color>
     <color name="color_toolbar">#BCE9B7</color>
+    <color name="color_search_menu">#E7E7E7</color>
 </resources>
