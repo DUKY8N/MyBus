@@ -8,10 +8,12 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,6 +48,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
     Document doc;
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
+    int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,25 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
         fab3.setOnClickListener(this);
+
+
+        EditText edt = (EditText) findViewById(R.id.search);
+        edt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                switch (actionId) {
+                    case EditorInfo.IME_ACTION_SEARCH:
+                        EditText searchEditText = (EditText)findViewById(R.id.search);
+                        routeNo = Integer.parseInt(searchEditText.getText().toString());
+                        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+                        dynamicLayout.removeAllViews();
+                        new GetXMLTask().execute();
+                        Toast.makeText(getApplicationContext(), "로딩 중...", Toast.LENGTH_LONG).show();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private class GetXMLTask extends AsyncTask<String, Void, Document> {
@@ -137,7 +159,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         dynamicLayout.removeAllViews();
         new GetXMLTask().execute();
-        Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "로딩 중...", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -192,5 +214,19 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
     protected void onDestroy() {
         super.onDestroy();
         overridePendingTransition(0,0);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(event.getAction() == KeyEvent.ACTION_DOWN) {
+            if(keyCode == KeyEvent.KEYCODE_BACK) {
+                Toast.makeText(this, "System back 버튼 눌림", Toast.LENGTH_SHORT).show();
+                count++;
+                if(count > 1) {
+                    finish();
+                }
+            }
+        }
+        return true;
     }
 }
