@@ -66,7 +66,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         protected Document doInBackground(String... urls) {
             URL url;
             try {
-                url = new URL("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteAcctoThrghSttnList?serviceKey=%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D&numOfRows=20&pageNo=1&cityCode=31230&routeId=GGB232000065");
+                url = new URL("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteNoList?serviceKey=%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D&cityCode=25&routeNo=5");
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 doc = db.parse(new InputSource(url.openStream()));
@@ -89,10 +89,10 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
-                NodeList nodenm = fstElmnt.getElementsByTagName("nodenm");
-                s += "정류장(81-1) = "+  nodenm.item(0).getChildNodes().item(0).getNodeValue() +"\n";
-                NodeList gpslati = fstElmnt.getElementsByTagName("gpslati");
-                s += "노드넘버 = "+  gpslati.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                NodeList ab = fstElmnt.getElementsByTagName("startnodenm");
+                s += "시작점 = "+  ab.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                NodeList abc = fstElmnt.getElementsByTagName("startvehicletime");
+                s += "시작시간 = "+  abc.item(0).getChildNodes().item(0).getNodeValue() +"\n";
 
                 AddText(s);
             }
