@@ -45,6 +45,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
 
     Document doc;
     LinearLayout dynamicLayout;
+    LinearLayout dynamicHori;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +65,6 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
         fab3.setOnClickListener(this);
-
-        new GetXMLTask().execute();
     }
 
     private class GetXMLTask extends AsyncTask<String, Void, Document> {
@@ -113,7 +112,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
 
     public void AddText(String s) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 2.0f);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
         param.height = 250;
         param.leftMargin = 50;
@@ -124,7 +123,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         newTextView.setText(s);
         newTextView.setGravity(Gravity.CENTER);
         newTextView.setPadding(0, 30, 0 ,0);
-        LinearLayout dynamicHori = new LinearLayout(this);
+        dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
         dynamicHori.setGravity(Gravity.CENTER);
         dynamicHori.setLayoutParams(param);
@@ -135,6 +134,8 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
     public void SearchBus (View v) {
         EditText searchEditText = (EditText)findViewById(R.id.search);
         routeNo = Integer.parseInt(searchEditText.getText().toString());
+        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+        dynamicLayout.removeAllViews();
         new GetXMLTask().execute();
         Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_SHORT).show();
     }
