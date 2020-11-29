@@ -139,25 +139,24 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
             NodeList nodeList = doc.getElementsByTagName("item");
 
             for(int i = 0; i< nodeList.getLength(); i++){
-                String bus_num = "";
-                String bus_type = " ";
+                String s = "";
 
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
                 NodeList routeno = fstElmnt.getElementsByTagName("routeno");
-                bus_num += "버스번호: "+ routeno.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                s += "버스번호: "+ routeno.item(0).getChildNodes().item(0).getNodeValue() +"\n";
                 NodeList routetp = fstElmnt.getElementsByTagName("routetp");
-                bus_type += "버스유형: "+ routetp.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                s += "버스유형: "+ routetp.item(0).getChildNodes().item(0).getNodeValue() +"\n";
 
-                AddText(bus_num, bus_type);
+                AddText(s);
             }
 
             super.onPostExecute(doc);
         }
     }
 
-    public void AddText(String bus_num,  String bus_type) {
+    public void AddText(String s) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -168,18 +167,16 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         param.bottomMargin = 10;
         TextView busnum_tv = new TextView(this);
         TextView bustype_tv = new TextView(this);
-        ImageView buscion_v = new ImageView(this);
-        busnum_tv.setText(bus_num);
-        busnum_tv.setPadding(0, 30, 0 ,0);
-        bustype_tv.setText(bus_type);
-        bustype_tv.setPadding(0, 30, 0 ,0);
-        buscion_v.setImageResource(R.drawable.bus_icon2);
+        ImageView busicon_v = new ImageView(this);
+        busnum_tv.setText(s);
+        busnum_tv.setPadding(30, 30, 30 ,30);
+        busicon_v.setImageResource(R.drawable.bus_icon2);
         dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
         dynamicHori.setLayoutParams(param);
         dynamicHori.addView(busnum_tv);
         dynamicHori.addView(bustype_tv);
-        dynamicHori.addView(buscion_v);
+        dynamicHori.addView(busicon_v);
         dynamicLayout.addView(dynamicHori);
     }
 
