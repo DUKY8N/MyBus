@@ -169,7 +169,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         TextView bustype_tv = new TextView(this);
         ImageView busicon_v = new ImageView(this);
         busnum_tv.setText(s);
-        busnum_tv.setPadding(30, 30, 30 ,30);
+        busnum_tv.setPadding(100, 40, 0 ,40);
         busicon_v.setImageResource(R.drawable.bus_icon2);
         dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
