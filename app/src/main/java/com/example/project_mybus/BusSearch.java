@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -167,15 +168,18 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         param.bottomMargin = 10;
         TextView busnum_tv = new TextView(this);
         TextView bustype_tv = new TextView(this);
+        ImageView buscion_v = new ImageView(this);
         busnum_tv.setText(bus_num);
         busnum_tv.setPadding(0, 30, 0 ,0);
         bustype_tv.setText(bus_type);
         bustype_tv.setPadding(0, 30, 0 ,0);
+        buscion_v.setImageResource(R.drawable.bus_icon2);
         dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
         dynamicHori.setLayoutParams(param);
         dynamicHori.addView(busnum_tv);
         dynamicHori.addView(bustype_tv);
+        dynamicHori.addView(buscion_v);
         dynamicLayout.addView(dynamicHori);
     }
 
