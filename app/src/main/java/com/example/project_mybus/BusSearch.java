@@ -14,8 +14,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,8 +40,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 public class BusSearch extends AppCompatActivity implements View.OnClickListener {
 
     String serviceKey = "%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D";
-    int cityCode = 25;
-    int routeNo = 5;
+    int cityCode;
+    int routeNo;
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
@@ -87,6 +89,27 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 return true;
             }
         });
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 0) {
+                    cityCode = 37020;
+                }
+                else if(position == 1) {
+                    cityCode = 31230;
+                }
+                else if(position == 2) {
+                    cityCode = 26;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                cityCode = 37020;
+            }
+        });
     }
 
     private class GetXMLTask extends AsyncTask<String, Void, Document> {
@@ -115,24 +138,25 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
             NodeList nodeList = doc.getElementsByTagName("item");
 
             for(int i = 0; i< nodeList.getLength(); i++){
-                String s = "";
+                String bus_num = "";
+                String bus_type = " ";
 
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
                 NodeList routeno = fstElmnt.getElementsByTagName("routeno");
-                s += "버스번호: "+ routeno.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                bus_num += "버스번호: "+ routeno.item(0).getChildNodes().item(0).getNodeValue() +"\n";
                 NodeList routetp = fstElmnt.getElementsByTagName("routetp");
-                s += "버스유형: "+ routetp.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                bus_type += "버스유형: "+ routetp.item(0).getChildNodes().item(0).getNodeValue() +"\n";
 
-                AddText(s);
+                AddText(bus_num, bus_type);
             }
 
             super.onPostExecute(doc);
         }
     }
 
-    public void AddText(String s) {
+    public void AddText(String bus_num,  String bus_type) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -141,15 +165,17 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         param.rightMargin = 50;
         param.topMargin = 40;
         param.bottomMargin = 10;
-        TextView newTextView = new TextView(this);
-        newTextView.setText(s);
-        newTextView.setGravity(Gravity.CENTER);
-        newTextView.setPadding(0, 30, 0 ,0);
+        TextView busnum_tv = new TextView(this);
+        TextView bustype_tv = new TextView(this);
+        busnum_tv.setText(bus_num);
+        busnum_tv.setPadding(0, 30, 0 ,0);
+        bustype_tv.setText(bus_type);
+        bustype_tv.setPadding(0, 30, 0 ,0);
         dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
-        dynamicHori.setGravity(Gravity.CENTER);
         dynamicHori.setLayoutParams(param);
-        dynamicHori.addView(newTextView);
+        dynamicHori.addView(busnum_tv);
+        dynamicHori.addView(bustype_tv);
         dynamicLayout.addView(dynamicHori);
     }
 

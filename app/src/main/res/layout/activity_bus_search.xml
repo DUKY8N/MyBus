@@ -23,6 +23,7 @@
             android:textStyle="bold"
             android:textSize="15dp"
             android:background="@drawable/spinner_shape"
+            android:theme="@style/SpinnerTheme"
             tools:layout_editor_absoluteX="1dp"
             tools:layout_editor_absoluteY="23dp" />
 
