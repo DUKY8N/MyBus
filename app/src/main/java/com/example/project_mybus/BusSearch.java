@@ -120,10 +120,10 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
-                NodeList ab = fstElmnt.getElementsByTagName("startnodenm");
-                s += "시작점 = "+  ab.item(0).getChildNodes().item(0).getNodeValue() +"\n";
-                NodeList abc = fstElmnt.getElementsByTagName("startvehicletime");
-                s += "시작시간 = "+  abc.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                NodeList routeno = fstElmnt.getElementsByTagName("routeno");
+                s += "버스번호: "+ routeno.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                NodeList routetp = fstElmnt.getElementsByTagName("routetp");
+                s += "버스유형: "+ routetp.item(0).getChildNodes().item(0).getNodeValue() +"\n";
 
                 AddText(s);
             }
