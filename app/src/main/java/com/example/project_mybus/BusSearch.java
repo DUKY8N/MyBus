@@ -52,6 +52,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
     int count;
+    int idc; //아이디를 가진 레이아웃 갯수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +138,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         protected void onPostExecute(Document doc) {
 
             NodeList nodeList = doc.getElementsByTagName("item");
+            idc = 0;
 
             for(int i = 0; i< nodeList.getLength(); i++){
                 String s = "";
@@ -149,14 +151,15 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 NodeList routetp = fstElmnt.getElementsByTagName("routetp");
                 s += "버스유형: "+ routetp.item(0).getChildNodes().item(0).getNodeValue() +"\n";
 
-                AddText(s);
+                idc++;
+                AddText(s, idc);
             }
 
             super.onPostExecute(doc);
         }
     }
 
-    public void AddText(String s) {
+    public void AddText(String s, int id) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -166,7 +169,6 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         param.topMargin = 40;
         param.bottomMargin = 10;
         TextView busnum_tv = new TextView(this);
-        TextView bustype_tv = new TextView(this);
         ImageView busicon_v = new ImageView(this);
         busnum_tv.setText(s);
         busnum_tv.setPadding(100, 40, 0 ,40);
@@ -175,8 +177,9 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
         dynamicHori.setLayoutParams(param);
         dynamicHori.addView(busnum_tv);
-        dynamicHori.addView(bustype_tv);
         dynamicHori.addView(busicon_v);
+        dynamicHori.setId(id);
+        dynamicHori.setOnClickListener(this);
         dynamicLayout.addView(dynamicHori);
     }
 
@@ -214,6 +217,11 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 startActivity(intent3);
                 finish();
                 break;
+        }
+        for(int j = 1; j <= idc; j++){
+            if(id == j){
+                Toast.makeText(getApplicationContext(), "클릭"+j, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
