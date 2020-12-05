@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -51,8 +53,10 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
     Document doc;
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
+    String[] busid;
+    String[] s1;
     int count;
-    int idc; //아이디를 가진 레이아웃 갯수
+    int idc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,27 +143,31 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
 
             NodeList nodeList = doc.getElementsByTagName("item");
             idc = 0;
+            busid = new String[nodeList.getLength()];
+            s1 = new String[nodeList.getLength()];
 
             for(int i = 0; i< nodeList.getLength(); i++){
-                String s = "";
+                String s2 = "";
 
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
                 NodeList routeno = fstElmnt.getElementsByTagName("routeno");
-                s += "버스번호: "+ routeno.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                s1[i] = routeno.item(0).getChildNodes().item(0).getNodeValue();
                 NodeList routetp = fstElmnt.getElementsByTagName("routetp");
-                s += "버스유형: "+ routetp.item(0).getChildNodes().item(0).getNodeValue() +"\n";
+                s2 = "(" + routetp.item(0).getChildNodes().item(0).getNodeValue() + ")";
+                NodeList routeid = fstElmnt.getElementsByTagName("routeid");
+                busid[i] = routeid.item(0).getChildNodes().item(0).getNodeValue();
 
                 idc++;
-                AddText(s, idc);
+                AddText(s1[i], s2, idc);
             }
 
             super.onPostExecute(doc);
         }
     }
 
-    public void AddText(String s, int id) {
+    public void AddText(String s1, String s2, int id) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -169,15 +177,29 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         param.topMargin = 40;
         param.bottomMargin = 10;
         TextView busnum_tv = new TextView(this);
+        TextView bustype_tv = new TextView(this);
         ImageView busicon_v = new ImageView(this);
-        busnum_tv.setText(s);
-        busnum_tv.setPadding(100, 40, 0 ,40);
+        busnum_tv.setText(s1);
+        busnum_tv.setTextSize(25);
+        busnum_tv.setEllipsize(TextUtils.TruncateAt.END);
+        busnum_tv.setSingleLine(true);
+        bustype_tv.setText(s2);
+        bustype_tv.setTextColor(Color.RED);
         busicon_v.setImageResource(R.drawable.bus_icon2);
+        busicon_v.setAdjustViewBounds(true);
+        busicon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        busicon_v.setPadding(60, 0, 0, 0);
+        LinearLayout layout_tv = new LinearLayout(this);
+        layout_tv.setOrientation(LinearLayout.VERTICAL);
+        layout_tv.setPadding(50, 40,0,0);
+        layout_tv.setGravity(Gravity.CENTER);
+        layout_tv.addView(busnum_tv);
+        layout_tv.addView(bustype_tv);
         dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
         dynamicHori.setLayoutParams(param);
-        dynamicHori.addView(busnum_tv);
         dynamicHori.addView(busicon_v);
+        dynamicHori.addView(layout_tv);
         dynamicHori.setId(id);
         dynamicHori.setOnClickListener(this);
         dynamicLayout.addView(dynamicHori);
@@ -220,7 +242,11 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
         }
         for(int j = 1; j <= idc; j++){
             if(id == j){
-                Toast.makeText(getApplicationContext(), "클릭"+j, Toast.LENGTH_SHORT).show();
+                Intent it = new Intent(this, BusSearchClick.class);
+                it.putExtra("it_busid", busid[j-1]);
+                it.putExtra("it_busno", s1[j-1]);
+                it.putExtra("it_citycode", cityCode);
+                startActivity(it);
             }
         }
     }
@@ -255,7 +281,7 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
     public boolean onKeyDown(int keyCode, KeyEvent event){
         if(event.getAction() == KeyEvent.ACTION_DOWN) {
             if(keyCode == KeyEvent.KEYCODE_BACK) {
-                Toast.makeText(this, "System back 버튼 눌림", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
                 count++;
                 if(count > 1) {
                     finish();
