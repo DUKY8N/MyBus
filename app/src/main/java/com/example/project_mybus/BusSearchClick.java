@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-public class BusSearchClick extends AppCompatActivity {
+public class BusSearchClick extends AppCompatActivity implements View.OnClickListener {
 
     String serviceKey = "%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D";
     int cityCode;
@@ -116,32 +117,33 @@ public class BusSearchClick extends AppCompatActivity {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
-        param.height = WRAP_CONTENT;
+        param.height = 150;
         param.leftMargin = 50;
         param.rightMargin = 50;
         param.topMargin = 40;
         param.bottomMargin = 10;
         TextView stopbus_tv = new TextView(this);
-        //ImageView busicon_v = new ImageView(this);
+        ImageView plusicon_v = new ImageView(this);
         stopbus_tv.setText(s1);
         stopbus_tv.setTextSize(25);
         stopbus_tv.setEllipsize(TextUtils.TruncateAt.END);
         stopbus_tv.setSingleLine(true);
-        //busicon_v.setImageResource(R.drawable.bus_icon2);
-        //busicon_v.setAdjustViewBounds(true);
-        //busicon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        //busicon_v.setPadding(60, 0, 0, 0);
+        plusicon_v.setImageResource(R.drawable.plus_icon);
+        plusicon_v.setAdjustViewBounds(true);
+        plusicon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        plusicon_v.setPadding(60, 30, 0, 30);
+        plusicon_v.setId(id);
+        plusicon_v.setOnClickListener(this);
         LinearLayout layout_tv = new LinearLayout(this);
         layout_tv.setOrientation(LinearLayout.VERTICAL);
-        layout_tv.setPadding(50, 0,0,0);
+        layout_tv.setPadding(50, 30,0,0);
         layout_tv.setGravity(Gravity.CENTER);
         layout_tv.addView(stopbus_tv);
         dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
         dynamicHori.setLayoutParams(param);
-        //dynamicHori.addView(busicon_v);
+        dynamicHori.addView(plusicon_v);
         dynamicHori.addView(layout_tv);
-        dynamicHori.setId(id);
         dynamicLayout.addView(dynamicHori);
     }
 
@@ -154,5 +156,17 @@ public class BusSearchClick extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        for(int j = 1; j <= idc; j++){
+            if(id == j){
+                Toast.makeText(getBaseContext(), j + "클릭 됨", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 }

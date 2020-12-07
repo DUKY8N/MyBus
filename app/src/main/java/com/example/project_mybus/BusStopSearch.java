@@ -30,6 +30,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.net.URL;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +44,7 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
     int cityCode;
     String nodeNm;
     int nodeNo;
+    boolean isNum;
     int numOfRows = 30;
     int pageNo = 1;
 
@@ -85,8 +87,13 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
                 switch (actionId) {
                     case EditorInfo.IME_ACTION_SEARCH:
                         EditText searchEditText = (EditText)findViewById(R.id.search);
-                        //nodeNm = Integer.parseInt(searchEditText.getText().toString());
-                        nodeNm = searchEditText.getText().toString();
+                        if (isDigit(searchEditText.getText().toString())) {
+                            nodeNo = Integer.parseInt(searchEditText.getText().toString());
+                            isNum = true;
+                        } else {
+                            nodeNm = searchEditText.getText().toString();
+                            isNum = false;
+                        }
                         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
                         dynamicLayout.removeAllViews();
                         new GetXMLTask().execute();
@@ -124,12 +131,22 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
         protected Document doInBackground(String... urls) {
             URL url;
             try {
-                url = new URL("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList"+
-                        "?serviceKey=" + serviceKey +
-                        "&cityCode="+ cityCode +
-                        "&nodeNm=" + nodeNm +
-                        "&numOfRows" + numOfRows +
-                        "pageNo" + pageNo);
+                if(isNum) {
+                    url = new URL("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList"+
+                            "?serviceKey=" + serviceKey +
+                            "&cityCode="+ cityCode +
+                            "&nodeNo=" + nodeNo +
+                            "&numOfRows" + numOfRows +
+                            "&pageNo" + pageNo);
+
+                } else {
+                        url = new URL("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList"+
+                                "?serviceKey=" + serviceKey +
+                                "&cityCode="+ cityCode +
+                                "&nodeNm=" + nodeNm +
+                                "&numOfRows" + numOfRows +
+                                "&pageNo" + pageNo);
+                }
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db = dbf.newDocumentBuilder();
                 doc = db.parse(new InputSource(url.openStream()));
@@ -207,10 +224,32 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
         dynamicLayout.addView(dynamicHori);
     }
 
+
+    public boolean isDigit (String input) {
+
+        char tmp;
+        boolean output = true;    // 결과값을 저장할 변수, 참/거짓밖에 없기 때문에 boolean으로 선언
+
+        for (int i = 0; i < input.length(); i++) {    //입력받은 문자열인 input의 길이만큼 반복문 진행(배열이 아닌 문자열의 길이기 때문에 length가 아닌 length()를 사용해야한다.)
+            tmp = input.charAt(i);    //한글자씩 검사하기 위해서 char형 변수인 tmp에 임시저장
+
+            if (Character.isDigit(tmp) == false) {    //문자열이 숫자가 아닐 경우
+                output = false;    //output의 값을 false로 바꿈
+            }
+        }
+
+        return output;
+    }
+
     public void SearchBusStop (View v) {
         EditText searchEditText = (EditText)findViewById(R.id.search);
-        //routeNo = Integer.parseInt(searchEditText.getText().toString());
-        nodeNm = searchEditText.getText().toString();
+        if (isDigit(searchEditText.getText().toString()) == true) {
+            nodeNo = Integer.parseInt(searchEditText.getText().toString());
+            isNum = true;
+        } else {
+            nodeNm = searchEditText.getText().toString();
+            isNum = false;
+        }
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         dynamicLayout.removeAllViews();
         new GetXMLTask().execute();
