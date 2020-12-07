@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -44,7 +45,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
     int idc;
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
-
+    ArrayList busNodeidList = new ArrayList();
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
 
         busnum.setText(str_busnum);
 
+        new GetXMLTask2().execute(); // 현재 버스 위치
         new GetXMLTask().execute();
     }
 
@@ -95,9 +97,11 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
 
             NodeList nodeList = doc.getElementsByTagName("item");
             idc = 0;
+            boolean isBus;
 
             for(int i = 0; i< nodeList.getLength(); i++){
                 String s1 = "";
+                isBus = false;
 
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
@@ -105,15 +109,57 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
                 NodeList nodenm = fstElmnt.getElementsByTagName("nodenm");
                 s1 = nodenm.item(0).getChildNodes().item(0).getNodeValue();
 
+                NodeList nodeid = fstElmnt.getElementsByTagName("nodeid");
+                for(int j = 0; j < busNodeidList.size(); ++j) {
+                    if(nodeid.item(0).getChildNodes().item(0).getNodeValue() ==  busNodeidList.get(j)) isBus = true;
+                }
+
                 idc++;
-                AddText(s1, idc);
+                AddText(s1, idc, isBus);
             }
 
             super.onPostExecute(doc);
         }
     }
 
-    public void AddText(String s1, int id) {
+    private class GetXMLTask2 extends AsyncTask<String, Void, Document> {
+        @Override
+        protected Document doInBackground(String... urls) {
+            URL url;
+            try {
+                url = new URL("http://openapi.tago.go.kr/openapi/service/BusLcInfoInqireService/getRouteAcctoBusLcList"+
+                        "?serviceKey=" + serviceKey +
+                        "&cityCode="+ cityCode +
+                        "&routeId=" + routeId);
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                doc = db.parse(new InputSource(url.openStream()));
+                doc.getDocumentElement().normalize();
+
+            } catch (Exception e) {
+                Toast.makeText(getBaseContext(), "Parsing Error", Toast.LENGTH_SHORT).show();
+            }
+            return doc;
+        }
+
+        @Override
+        protected void onPostExecute(Document doc) {
+
+            NodeList nodeList = doc.getElementsByTagName("item");
+            for(int i = 0; i< nodeList.getLength(); i++){
+                Node node = nodeList.item(i);
+                Element fstElmnt = (Element) node;
+
+                NodeList nodeid = fstElmnt.getElementsByTagName("nodeid");
+                busNodeidList.add(nodeid.item(0).getChildNodes().item(0).getNodeValue());
+
+            }
+
+            super.onPostExecute(doc);
+        }
+    }
+
+    public void AddText(String s1, int id, boolean isBus) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -126,6 +172,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
         ImageView plusicon_v = new ImageView(this);
         stopbus_tv.setText(s1);
         stopbus_tv.setTextSize(25);
+        if(isBus) stopbus_tv.setTextColor(0xAA1e6de0);
         stopbus_tv.setEllipsize(TextUtils.TruncateAt.END);
         stopbus_tv.setSingleLine(true);
         plusicon_v.setImageResource(R.drawable.plus_icon);
