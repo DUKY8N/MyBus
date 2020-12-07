@@ -43,7 +43,7 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
     String serviceKey = "%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D";
     int cityCode;
     String nodeNm;
-    int nodeNo;
+    String nodeNo;
     boolean isNum;
     int numOfRows = 30;
     int pageNo = 1;
@@ -88,7 +88,7 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
                     case EditorInfo.IME_ACTION_SEARCH:
                         EditText searchEditText = (EditText)findViewById(R.id.search);
                         if (isDigit(searchEditText.getText().toString())) {
-                            nodeNo = Integer.parseInt(searchEditText.getText().toString());
+                            nodeNo = searchEditText.getText().toString();
                             isNum = true;
                         } else {
                             nodeNm = searchEditText.getText().toString();
@@ -141,11 +141,11 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
 
                 } else {
                         url = new URL("http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getSttnNoList"+
-                                "?serviceKey=" + serviceKey +
-                                "&cityCode="+ cityCode +
-                                "&nodeNm=" + nodeNm +
-                                "&numOfRows" + numOfRows +
-                                "&pageNo" + pageNo);
+                            "?serviceKey=" + serviceKey +
+                            "&cityCode="+ cityCode +
+                            "&nodeNm=" + nodeNm +
+                            "&numOfRows" + numOfRows +
+                            "&pageNo" + pageNo);
                 }
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db = dbf.newDocumentBuilder();
@@ -244,7 +244,7 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
     public void SearchBusStop (View v) {
         EditText searchEditText = (EditText)findViewById(R.id.search);
         if (isDigit(searchEditText.getText().toString()) == true) {
-            nodeNo = Integer.parseInt(searchEditText.getText().toString());
+            nodeNo = searchEditText.getText().toString();
             isNum = true;
         } else {
             nodeNm = searchEditText.getText().toString();
