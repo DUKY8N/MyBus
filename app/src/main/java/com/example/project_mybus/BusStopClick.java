@@ -60,6 +60,8 @@ public class BusStopClick extends AppCompatActivity implements View.OnClickListe
         String str_stopnm = it.getStringExtra("it_stopnm");
         cityCode = it.getIntExtra("it_citycode", 0);
 
+        stopnm.setEllipsize(TextUtils.TruncateAt.END);
+        stopnm.setSingleLine(true);
         stopnm.setText(str_stopnm);
 
         new GetXMLTask().execute();
