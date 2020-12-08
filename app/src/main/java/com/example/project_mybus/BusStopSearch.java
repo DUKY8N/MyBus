@@ -282,6 +282,15 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(getApplicationContext(), "현재화면 입니다.", Toast.LENGTH_SHORT).show();
                 break;
         }
+        for(int j = 1; j <= idc; j++){
+            if(id == j){
+                Intent it = new Intent(this, BusStopClick.class);
+                it.putExtra("it_stopnm", bstop_nm[j-1]);
+                it.putExtra("it_stopid", bstop_id[j-1]);
+                it.putExtra("it_citycode", cityCode);
+                startActivity(it);
+            }
+        }
     }
 
 
