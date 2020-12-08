@@ -5,10 +5,13 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,10 +46,11 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
     int numOfRows = 200;
     String routeId;
     Document doc;
+    Document doc2;
     int idc;
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
-    ArrayList busNodeidList = new ArrayList();
+    String[] busNodeidList;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +106,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
 
             for(int i = 0; i< nodeList.getLength(); i++){
                 String s1 = "";
+                String s2 = "";
                 isBus = false;
 
                 Node node = nodeList.item(i);
@@ -110,8 +116,9 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
                 s1 = nodenm.item(0).getChildNodes().item(0).getNodeValue();
 
                 NodeList nodeid = fstElmnt.getElementsByTagName("nodeid");
-                for(int j = 0; j < busNodeidList.size(); ++j) {
-                    if(nodeid.item(0).getChildNodes().item(0).getNodeValue() ==  busNodeidList.get(j)) isBus = true;
+                s2 = nodeid.item(0).getChildNodes().item(0).getNodeValue();
+                for(int j = 0; j < busNodeidList.length; ++j) {
+                    if(s2.equals(busNodeidList[j])) isBus = true;
                 }
 
                 idc++;
@@ -133,29 +140,28 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
                         "&routeId=" + routeId);
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder db = dbf.newDocumentBuilder();
-                doc = db.parse(new InputSource(url.openStream()));
-                doc.getDocumentElement().normalize();
+                doc2 = db.parse(new InputSource(url.openStream()));
+                doc2.getDocumentElement().normalize();
 
             } catch (Exception e) {
                 Toast.makeText(getBaseContext(), "Parsing Error", Toast.LENGTH_SHORT).show();
             }
-            return doc;
+            return doc2;
         }
 
         @Override
-        protected void onPostExecute(Document doc) {
-
-            NodeList nodeList = doc.getElementsByTagName("item");
+        protected void onPostExecute(Document doc2) {
+            NodeList nodeList = doc2.getElementsByTagName("item");
+            busNodeidList = new String[nodeList.getLength()];
             for(int i = 0; i< nodeList.getLength(); i++){
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
                 NodeList nodeid = fstElmnt.getElementsByTagName("nodeid");
-                busNodeidList.add(nodeid.item(0).getChildNodes().item(0).getNodeValue());
-
+                busNodeidList[i] = nodeid.item(0).getChildNodes().item(0).getNodeValue();
             }
 
-            super.onPostExecute(doc);
+            super.onPostExecute(doc2);
         }
     }
 
@@ -172,7 +178,6 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
         ImageView plusicon_v = new ImageView(this);
         stopbus_tv.setText(s1);
         stopbus_tv.setTextSize(25);
-        if(isBus) stopbus_tv.setTextColor(Color.RED);
         stopbus_tv.setEllipsize(TextUtils.TruncateAt.END);
         stopbus_tv.setSingleLine(true);
         plusicon_v.setImageResource(R.drawable.plus_icon);
@@ -191,6 +196,15 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
         dynamicHori.setLayoutParams(param);
         dynamicHori.addView(plusicon_v);
         dynamicHori.addView(layout_tv);
+        if(isBus == true) {
+            stopbus_tv.setTextColor(Color.RED);
+            ImageView busticon_v = new ImageView(this);
+            busticon_v.setImageResource(R.drawable.bus_icon3);
+            busticon_v.setAdjustViewBounds(true);
+            busticon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            busticon_v.setPadding(30, 30, 0, 30);
+            dynamicHori.addView(busticon_v);
+        }
         dynamicLayout.addView(dynamicHori);
     }
 
@@ -215,5 +229,12 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
             }
         }
 
+    }
+
+    public void Clickref (View v) {
+        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+        dynamicLayout.removeAllViews();
+        new GetXMLTask2().execute(); // 현재 버스 위치
+        new GetXMLTask().execute();
     }
 }

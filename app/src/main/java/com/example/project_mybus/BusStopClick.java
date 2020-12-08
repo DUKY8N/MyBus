@@ -188,4 +188,10 @@ public class BusStopClick extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+
+    public void Clickref (View v) {
+        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+        dynamicLayout.removeAllViews();
+        new GetXMLTask().execute();
+    }
 }

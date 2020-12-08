@@ -152,8 +152,14 @@ public class BusSearch extends AppCompatActivity implements View.OnClickListener
                 Node node = nodeList.item(i);
                 Element fstElmnt = (Element) node;
 
-                NodeList routeno = fstElmnt.getElementsByTagName("routeno");
-                s1[i] = routeno.item(0).getChildNodes().item(0).getNodeValue();
+                if(cityCode == 37020 || cityCode == 31230){
+                    NodeList routeno = fstElmnt.getElementsByTagName("routeno");
+                    s1[i] = routeno.item(0).getChildNodes().item(0).getNodeValue() + "번 버스";
+                }
+                else{
+                    NodeList routeno = fstElmnt.getElementsByTagName("routeno");
+                    s1[i] = routeno.item(0).getChildNodes().item(0).getNodeValue();
+                }
                 NodeList routetp = fstElmnt.getElementsByTagName("routetp");
                 s2 = "(" + routetp.item(0).getChildNodes().item(0).getNodeValue() + ")";
                 NodeList routeid = fstElmnt.getElementsByTagName("routeid");
