@@ -7,12 +7,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBManager extends SQLiteOpenHelper {
 
     public DBManager(Context context) {
-        super(context, "BusBookMark", null, 1);
+        super(context, "DB", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table BusBookMark (name text, folder text, routeId text, nodeId text)");
+        db.execSQL("create table BusBookMark (folder text, routeId text, nodeId text)");
+        db.execSQL("create table folders(name text)");
     }
 
     @Override

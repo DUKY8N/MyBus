@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".BusSearchClick">
+    tools:context=".AddBookMark">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -37,7 +37,7 @@
             android:layout_marginLeft="15dp"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
-            android:onClick="Clickref"
+            android:onClick="FolderAddClick"
             android:scaleType="fitCenter"
             android:src="@drawable/add_folder" />
 
@@ -66,32 +66,27 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/layout_shape"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/scroll"
-        android:weightSum="5"
+        android:onClick="AddClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <EditText
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
         <ImageButton
             android:id="@+id/add"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:onClick="AddClick"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:layout_weight="4"
             android:src="@drawable/plus_icon" />
 
     </LinearLayout>
