@@ -1,5 +1,6 @@
 package com.example.project_mybus;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -107,6 +108,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
             for(int i = 0; i< nodeList.getLength(); i++){
                 String s1 = "";
                 String s2 = "";
+                String nodeId = "";
                 isBus = false;
 
                 Node node = nodeList.item(i);
@@ -116,13 +118,14 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
                 s1 = nodenm.item(0).getChildNodes().item(0).getNodeValue();
 
                 NodeList nodeid = fstElmnt.getElementsByTagName("nodeid");
+                nodeId = nodeid.item(0).getChildNodes().item(0).getNodeValue();
                 s2 = nodeid.item(0).getChildNodes().item(0).getNodeValue();
                 for(int j = 0; j < busNodeidList.length; ++j) {
                     if(s2.equals(busNodeidList[j])) isBus = true;
                 }
 
                 idc++;
-                AddText(s1, idc, isBus);
+                AddText(s1, idc, isBus, nodeId);
             }
 
             super.onPostExecute(doc);
@@ -165,7 +168,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public void AddText(String s1, int id, boolean isBus) {
+    public void AddText(String s1, int id, boolean isBus, String nodeId) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -185,6 +188,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
         plusicon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
         plusicon_v.setPadding(60, 30, 0, 30);
         plusicon_v.setId(id);
+        plusicon_v.setTag(nodeId);
         plusicon_v.setOnClickListener(this);
         LinearLayout layout_tv = new LinearLayout(this);
         layout_tv.setOrientation(LinearLayout.VERTICAL);
@@ -222,10 +226,16 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        ImageView add_v;
 
         for(int j = 1; j <= idc; j++){
             if(id == j){
+                ContentValues values = new ContentValues();
                 Toast.makeText(getBaseContext(), j + "클릭 됨", Toast.LENGTH_SHORT).show();
+                add_v = (ImageView)findViewById(v.getId());
+                values.put("routeId", routeId);
+                values.put("nodeId", add_v.getTag().toString());
+
             }
         }
 
