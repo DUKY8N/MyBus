@@ -230,11 +230,12 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
 
         for(int j = 1; j <= idc; j++){
             if(id == j){
-                ContentValues values = new ContentValues();
                 Toast.makeText(getBaseContext(), j + "클릭 됨", Toast.LENGTH_SHORT).show();
                 add_v = (ImageView)findViewById(v.getId());
-                values.put("routeId", routeId);
-                values.put("nodeId", add_v.getTag().toString());
+                Intent it = new Intent(this, AddBookMark.class);
+                it.putExtra("routeId", routeId);
+                it.putExtra("nodeId", add_v.getTag().toString());
+                startActivity(it);
 
             }
         }

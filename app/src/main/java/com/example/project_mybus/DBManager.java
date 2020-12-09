@@ -12,7 +12,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table BusBookMark (id int, name text, routeId text, nodeId text)");
+        db.execSQL("create table BusBookMark (name text, folder text, routeId text, nodeId text)");
     }
 
     @Override
