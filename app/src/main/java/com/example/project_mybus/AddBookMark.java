@@ -50,8 +50,10 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
 
     Document doc;
     String serviceKey = "%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D";
-    String startnodenm;
-    String endnodenm;
+    String startbus = "";
+    String endbus = "";
+    String busno = "";
+    String input = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,11 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
                 idc++;
                 AddFolder(foldnm, idc);
             }
+
+            cursor.close();
+            sqlitedb.close();
+            dbmanager.close();
+
         } catch (SQLiteException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -88,21 +95,19 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
 
         for(int j = 1; j <= idc; j++){
             if(id == j){
-                Toast.makeText(this, j + "클릭 됨", Toast.LENGTH_LONG).show();
                 //폴더에 +아이콘 클릭하면 인텐트값 넘기기
                 try {
                     ContentValues values = new ContentValues();
                     values.put("folder", v.getTag().toString());
-                    values.put("busnum", routeId);
+                    values.put("busnum", busno);
                     values.put("cityid", cityCode);
-                    values.put("startnm", startnodenm); // 시작점 종점 받아와야함.
-                    values.put("endnm", endnodenm);
+                    values.put("startnm", startbus); // 시작점 종점 받아와야함.
+                    values.put("endnm", endbus);
+                    values.put("busid", routeId);
 
                     long newRowId = sqlitedb.insert("BusBookMark", null, values);
                     sqlitedb.close();
                     dbmanager.close();
-
-                    finish();
 
                 } catch(SQLiteException e) {
                     Toast.makeText(this,  e.getMessage(), Toast.LENGTH_LONG);
@@ -130,7 +135,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Text 값 받기
-                String input = et.getText().toString();
+                input = et.getText().toString();
 
                 dialog.dismiss();   //닫기
                 AddFolderData(input);
@@ -192,7 +197,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         plusicon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
         plusicon_v.setPadding(60, 30, 0, 30);
         plusicon_v.setId(id);
-        plusicon_v.setTag("fold_name");
+        plusicon_v.setTag(input);
         plusicon_v.setOnClickListener(this);
         foldicon_v.setImageResource(R.drawable.folder);
         foldicon_v.setAdjustViewBounds(true);
@@ -208,27 +213,26 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
     }
 
     public void AddClick(View view) {
-        //화면아래 +아이콘 클릭하면 값 넘기기
         try {
+            dbmanager = new DBManager(this);
+            sqlitedb = dbmanager.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put("folder", "null");
-            values.put("busnum", routeId);
+            values.put("folder", "empty");
+            values.put("busnum", busno);
             values.put("cityid", cityCode);
-            values.put("startnm", startnodenm);
-            values.put("endnm", endnodenm);
-
+            values.put("startnm", startbus);
+            values.put("endnm", endbus);
+            values.put("busid", routeId);
             long newRowId = sqlitedb.insert("BusBookMark", null, values);
             sqlitedb.close();
             dbmanager.close();
-
-            finish();
 
         } catch(SQLiteException e) {
             Toast.makeText(this,  e.getMessage(), Toast.LENGTH_LONG);
         }
     }
 
-    private class GetXMLTask extends AsyncTask<String, Void, Document> {
+    private class GetXMLTask extends AsyncTask<String, Void, Document>{
         @Override
         protected Document doInBackground(String... urls) {
             URL url;
@@ -251,16 +255,25 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         @Override
         protected void onPostExecute(Document doc) {
             NodeList nodeList = doc.getElementsByTagName("item");
-            Node node = nodeList.item(0);
-            Element elmnt = (Element) node;
+            busno = "";
+            startbus = "";
+            endbus = "";
+            for(int i = 0; i< nodeList.getLength(); i++){
 
-            NodeList snn = elmnt.getElementsByTagName("startnodenm");
-            startnodenm = snn.item(0).getChildNodes().item(0).getNodeValue();
-            NodeList enn = elmnt.getElementsByTagName("endnodenm");
-            endnodenm = snn.item(0).getChildNodes().item(0).getNodeValue();
+                Node node = nodeList.item(i);
+                Element fstElmnt = (Element) node;
+
+                NodeList routeno = fstElmnt.getElementsByTagName("routeno");
+                busno = routeno.item(0).getChildNodes().item(0).getNodeValue();
+
+                NodeList startnodenm = fstElmnt.getElementsByTagName("startnodenm");
+                startbus = startnodenm.item(0).getChildNodes().item(0).getNodeValue();
+
+                NodeList endnodenm  = fstElmnt.getElementsByTagName("endnodenm");
+                endbus = endnodenm.item(0).getChildNodes().item(0).getNodeValue();
+            }
 
             super.onPostExecute(doc);
-
         }
     }
 }
