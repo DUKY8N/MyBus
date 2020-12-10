@@ -9,21 +9,28 @@ import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-public class FolderClick extends AppCompatActivity {
+public class FolderClick extends AppCompatActivity implements View.OnClickListener {
 
     DBManager dbManager;
     SQLiteDatabase sqlitedb;
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
     String str_folder = "";
+    ArrayList busnums = new ArrayList();
+    ArrayList busids = new ArrayList();
+    ArrayList citys = new ArrayList();
+    int idc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +40,12 @@ public class FolderClick extends AppCompatActivity {
         Intent it = getIntent();
         str_folder = it.getStringExtra("it_foldnm");
 
+        TextView foldnm_tv = (TextView)findViewById(R.id.foldername);
+
+        foldnm_tv.setText(str_folder);
+
         try {
+            idc = 0;
             dbManager = new DBManager(this);
             sqlitedb = dbManager.getReadableDatabase();
             Cursor cursor = sqlitedb.query("BusBookMark", null, "folder = ?", new String[]{str_folder}, null, null, null);
@@ -44,7 +56,11 @@ public class FolderClick extends AppCompatActivity {
                 String endnm = cursor.getString(cursor.getColumnIndex("endnm"));
                 String routeId = cursor.getString(cursor.getColumnIndex("busid"));
 
-                AddText(busnum, cityid, startnm, endnm);
+                busids.add(routeId);
+                citys.add(cityid);
+
+                idc++;
+                AddText(busnum, cityid, startnm, endnm, idc);
             }
             cursor.close();
             sqlitedb.close();
@@ -54,7 +70,7 @@ public class FolderClick extends AppCompatActivity {
         }
     }
 
-    public void AddText(String busnum, String cityid, String startnm, String endnm) {
+    public void AddText(String busnum, String cityid, String startnm, String endnm, int id) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -69,9 +85,11 @@ public class FolderClick extends AppCompatActivity {
         ImageView busicon_v = new ImageView(this);
         if((cityid.equals("37020")) || (cityid.equals("31230"))){
             busnum_tv.setText(busnum + "번 버스");
+            busnums.add(busnum+ "번 버스");
         }
         else {
             busnum_tv.setText(busnum);
+            busnums.add(busnum);
         }
         busnum_tv.setTextSize(25);
         busnum_tv.setEllipsize(TextUtils.TruncateAt.END);
@@ -107,6 +125,22 @@ public class FolderClick extends AppCompatActivity {
         dynamicHori.setLayoutParams(param);
         dynamicHori.addView(busicon_v);
         dynamicHori.addView(layout_tv);
+        dynamicHori.setId(id);
+        dynamicHori.setOnClickListener(this);
         dynamicLayout.addView(dynamicHori);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        for(int k = 1; k <= idc; k++){
+            if(id == k){
+                Intent intent5 = new Intent(this, BusSearchClick.class);
+                intent5.putExtra("it_busid", busids.get(k-1).toString());
+                intent5.putExtra("it_busno", busnums.get(k-1).toString());
+                intent5.putExtra("it_citycode", Integer.parseInt(citys.get(k-1).toString()));
+                startActivity(intent5);
+            }
+        }
     }
 }

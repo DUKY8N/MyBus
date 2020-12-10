@@ -163,7 +163,7 @@ public class BusStopClick extends AppCompatActivity implements View.OnClickListe
         dynamicHori = new LinearLayout(this);
         dynamicHori.setBackgroundResource(R.drawable.search_menu_shape);
         dynamicHori.setLayoutParams(param);
-        dynamicHori.addView(plusicon_v);
+        //dynamicHori.addView(plusicon_v);
         dynamicHori.addView(layout_tv);
         dynamicLayout.addView(dynamicHori);
     }

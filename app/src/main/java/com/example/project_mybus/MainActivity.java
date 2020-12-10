@@ -1,7 +1,9 @@
 package com.example.project_mybus;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -44,14 +46,18 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     DBManager dbManager;
     SQLiteDatabase sqlitedb;
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
     int idc;
+    int idc_tv;
     ArrayList foldnms = new ArrayList();
+    ArrayList busnums = new ArrayList();
+    ArrayList busids = new ArrayList();
+    ArrayList citys = new ArrayList();
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
@@ -96,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         try {
+            idc_tv = 200;
             dbManager = new DBManager(this);
             sqlitedb = dbManager.getReadableDatabase();
             String str_folder = "empty";
@@ -107,7 +114,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String endnm = cursor.getString(cursor.getColumnIndex("endnm"));
                 String routeId = cursor.getString(cursor.getColumnIndex("busid"));
 
-                AddText(busnum, cityid, startnm, endnm);
+                busids.add(routeId);
+                citys.add(cityid);
+
+
+                idc_tv++;
+                AddText(busnum, cityid, startnm, endnm, idc_tv);
             }
             cursor.close();
             sqlitedb.close();
@@ -115,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (SQLiteException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
     }
 
     public void AddFolder(String fold_name, int id) {
@@ -144,10 +157,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dynamicHori.addView(foldname_tv);
         dynamicHori.setId(id);
         dynamicHori.setOnClickListener(this);
+        dynamicHori.setOnLongClickListener(this);
         dynamicLayout.addView(dynamicHori);
     }
 
-    public void AddText(String busnum, String cityid, String startnm, String endnm) {
+    public void AddText(String busnum, String cityid, String startnm, String endnm, int id) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 2.0f);
         param.width = MATCH_PARENT;
@@ -162,9 +176,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageView busicon_v = new ImageView(this);
         if((cityid.equals("37020")) || (cityid.equals("31230"))){
             busnum_tv.setText(busnum + "번 버스");
+            busnums.add(busnum+ "번 버스");
         }
         else {
             busnum_tv.setText(busnum);
+            busnums.add(busnum);
         }
         busnum_tv.setTextSize(25);
         busnum_tv.setEllipsize(TextUtils.TruncateAt.END);
@@ -200,10 +216,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dynamicHori.setLayoutParams(param);
         dynamicHori.addView(busicon_v);
         dynamicHori.addView(layout_tv);
+        dynamicHori.setId(id);
+        dynamicHori.setOnClickListener(this);
+        dynamicHori.setOnLongClickListener(this);
         dynamicLayout.addView(dynamicHori);
     }
-
-
 
     @Override
     public void onClick(View v) {
@@ -239,6 +256,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent4);
             }
         }
+        for(int k = 201; k <= idc_tv; k++){
+            if(id == k){
+                Intent intent5 = new Intent(this, BusSearchClick.class);
+                intent5.putExtra("it_busid", busids.get(k-201).toString());
+                intent5.putExtra("it_busno", busnums.get(k-201).toString());
+                intent5.putExtra("it_citycode", Integer.parseInt(citys.get(k-201).toString()));
+                startActivity(intent5);
+            }
+        }
     }
 
     private void anim() {
@@ -265,5 +291,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         overridePendingTransition(0,0);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        int id = v.getId();
+
+        for(int j = 1; j <= idc; j++){
+            if(id == j){
+                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+
+                ad.setTitle("삭제");
+                ad.setMessage("삭제 하시겠습니까?");
+
+                ad.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                        // Event
+                    }
+                });
+
+                ad.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        // Event
+                    }
+                });
+                ad.show();
+            }
+        }
+        for(int k = 201; k <= idc_tv; k++){
+            if(id == k){
+
+
+            }
+        }
+
+        return false;
     }
 }

@@ -99,6 +99,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
             if(id == j){
                 //폴더에 +아이콘 클릭하면 인텐트값 넘기기
                 try {
+                    Toast.makeText(this, "추가 되었습니다!", Toast.LENGTH_SHORT).show();
                     dbmanager = new DBManager(this);
                     sqlitedb = dbmanager.getWritableDatabase();
                     ContentValues values = new ContentValues();
@@ -217,6 +218,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
 
     public void AddClick(View view) {
         try {
+            Toast.makeText(this, "추가 되었습니다!", Toast.LENGTH_SHORT).show();
             dbmanager = new DBManager(this);
             sqlitedb = dbmanager.getWritableDatabase();
             ContentValues values = new ContentValues();
