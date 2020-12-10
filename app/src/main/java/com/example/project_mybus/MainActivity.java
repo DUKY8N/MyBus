@@ -36,6 +36,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
     int idc;
+    ArrayList foldnms = new ArrayList();
 
     private Animation fab_open, fab_close;
     private Boolean isFabOpen = false;
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Cursor cursor = sqlitedb.query("folders", null, null, null, null, null, null);
             while (cursor.moveToNext()) {
                 String foldnm = cursor.getString(cursor.getColumnIndex("name"));
+                foldnms.add(foldnm);
                 idc++;
                 AddFolder(foldnm, idc);
             }
@@ -231,7 +234,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         for(int j = 1; j <= idc; j++){
             if(id == j){
-                Toast.makeText(getApplicationContext(), j + "클릭", Toast.LENGTH_SHORT).show();
+                Intent intent4 = new Intent(this, FolderClick.class);
+                intent4.putExtra("it_foldnm", foldnms.get(j-1).toString());
+                startActivity(intent4);
             }
         }
     }

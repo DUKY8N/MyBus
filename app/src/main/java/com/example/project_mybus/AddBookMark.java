@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -53,7 +54,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
     String startbus = "";
     String endbus = "";
     String busno = "";
-    String input = "";
+    ArrayList foldname = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
             Cursor cursor = sqlitedb.query("folders", null, null, null, null, null, null);
             while (cursor.moveToNext()) {
                 String foldnm = cursor.getString(cursor.getColumnIndex("name"));
+                foldname.add(foldnm);
                 idc++;
                 AddFolder(foldnm, idc);
             }
@@ -97,14 +99,15 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
             if(id == j){
                 //폴더에 +아이콘 클릭하면 인텐트값 넘기기
                 try {
+                    dbmanager = new DBManager(this);
+                    sqlitedb = dbmanager.getWritableDatabase();
                     ContentValues values = new ContentValues();
-                    values.put("folder", v.getTag().toString());
+                    values.put("folder", foldname.get(j-1).toString());
                     values.put("busnum", busno);
                     values.put("cityid", cityCode);
-                    values.put("startnm", startbus); // 시작점 종점 받아와야함.
+                    values.put("startnm", startbus);
                     values.put("endnm", endbus);
                     values.put("busid", routeId);
-
                     long newRowId = sqlitedb.insert("BusBookMark", null, values);
                     sqlitedb.close();
                     dbmanager.close();
@@ -135,7 +138,8 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Text 값 받기
-                input = et.getText().toString();
+                String input = et.getText().toString();
+                foldname.add(input);
 
                 dialog.dismiss();   //닫기
                 AddFolderData(input);
@@ -197,7 +201,6 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         plusicon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
         plusicon_v.setPadding(60, 30, 0, 30);
         plusicon_v.setId(id);
-        plusicon_v.setTag(input);
         plusicon_v.setOnClickListener(this);
         foldicon_v.setImageResource(R.drawable.folder);
         foldicon_v.setAdjustViewBounds(true);

@@ -2,6 +2,7 @@ package com.example.project_mybus;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -28,6 +29,9 @@ public class FolderClick extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_click);
+
+        Intent it = getIntent();
+        str_folder = it.getStringExtra("it_foldnm");
 
         try {
             dbManager = new DBManager(this);
