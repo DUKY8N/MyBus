@@ -43,7 +43,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
     int idc = 0;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +62,8 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         } catch (SQLiteException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
+        //BusSearchClick에서 값 받아오기 getintent
     }
 
 
@@ -72,6 +74,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         for(int j = 1; j <= idc; j++){
             if(id == j){
                 Toast.makeText(this, j + "클릭 됨", Toast.LENGTH_LONG).show();
+                //폴더에 +아이콘 클릭하면 인텐트값 넘기기
             }
         }
 
@@ -170,4 +173,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         dynamicLayout.addView(dynamicHori);
     }
 
+    public void AddClick(View view) {
+        //화면아래 +아이콘 클릭하면 값 넘기기
+    }
 }
