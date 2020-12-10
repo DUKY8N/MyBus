@@ -44,10 +44,21 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
     LinearLayout dynamicHori;
     int idc = 0;
 
+    Intent it;
+    int cityCode;
+    String routeId;
+
+    Document doc;
+    String serviceKey = "%2FnU0vVe9yEqaJ2vRtCPpJZHv%2Bef81aaG8G2pMXgYpYhJGqpcVzsFP2pqQ62JPlcfY54It2FZeXgN3p8nItuu9Q%3D%3D";
+    String startnodenm;
+    String endnodenm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_book_mark);
+
+        it = getIntent();
 
         idc = 0;
         try {
@@ -64,6 +75,10 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         }
 
         //BusSearchClick에서 값 받아오기 getintent
+        cityCode = it.getExtras().getInt("cityCode");
+        routeId = it.getExtras().getString("routeId");
+
+        new GetXMLTask().execute();
     }
 
 
@@ -75,6 +90,24 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
             if(id == j){
                 Toast.makeText(this, j + "클릭 됨", Toast.LENGTH_LONG).show();
                 //폴더에 +아이콘 클릭하면 인텐트값 넘기기
+                try {
+                    ContentValues values = new ContentValues();
+                    values.put("folder", v.getTag().toString());
+                    values.put("busnum", routeId);
+                    values.put("cityid", cityCode);
+                    values.put("startnm", startnodenm); // 시작점 종점 받아와야함.
+                    values.put("endnm", endnodenm);
+
+                    long newRowId = sqlitedb.insert("BusBookMark", null, values);
+                    sqlitedb.close();
+                    dbmanager.close();
+
+                    finish();
+
+                } catch(SQLiteException e) {
+                    Toast.makeText(this,  e.getMessage(), Toast.LENGTH_LONG);
+                }
+
             }
         }
 
@@ -159,6 +192,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
         plusicon_v.setScaleType(ImageView.ScaleType.FIT_CENTER);
         plusicon_v.setPadding(60, 30, 0, 30);
         plusicon_v.setId(id);
+        plusicon_v.setTag("fold_name");
         plusicon_v.setOnClickListener(this);
         foldicon_v.setImageResource(R.drawable.folder);
         foldicon_v.setAdjustViewBounds(true);
@@ -175,5 +209,58 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
 
     public void AddClick(View view) {
         //화면아래 +아이콘 클릭하면 값 넘기기
+        try {
+            ContentValues values = new ContentValues();
+            values.put("folder", "null");
+            values.put("busnum", routeId);
+            values.put("cityid", cityCode);
+            values.put("startnm", startnodenm);
+            values.put("endnm", endnodenm);
+
+            long newRowId = sqlitedb.insert("BusBookMark", null, values);
+            sqlitedb.close();
+            dbmanager.close();
+
+            finish();
+
+        } catch(SQLiteException e) {
+            Toast.makeText(this,  e.getMessage(), Toast.LENGTH_LONG);
+        }
+    }
+
+    private class GetXMLTask extends AsyncTask<String, Void, Document> {
+        @Override
+        protected Document doInBackground(String... urls) {
+            URL url;
+            try {
+                url = new URL("http://openapi.tago.go.kr/openapi/service/BusRouteInfoInqireService/getRouteInfoIem"+
+                        "?serviceKey=" + serviceKey +
+                        "&cityCode="+ cityCode +
+                        "&routeId=" + routeId);
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                doc = db.parse(new InputSource(url.openStream()));
+                doc.getDocumentElement().normalize();
+
+            } catch (Exception e) {
+                Toast.makeText(getBaseContext(), "Parsing Error", Toast.LENGTH_SHORT).show();
+            }
+            return doc;
+        }
+
+        @Override
+        protected void onPostExecute(Document doc) {
+            NodeList nodeList = doc.getElementsByTagName("item");
+            Node node = nodeList.item(0);
+            Element elmnt = (Element) node;
+
+            NodeList snn = elmnt.getElementsByTagName("startnodenm");
+            startnodenm = snn.item(0).getChildNodes().item(0).getNodeValue();
+            NodeList enn = elmnt.getElementsByTagName("endnodenm");
+            endnodenm = snn.item(0).getChildNodes().item(0).getNodeValue();
+
+            super.onPostExecute(doc);
+
+        }
     }
 }
