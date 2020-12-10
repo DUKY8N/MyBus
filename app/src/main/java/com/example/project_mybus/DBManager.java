@@ -12,8 +12,8 @@ public class DBManager extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table BusBookMark (folder text, routeId text, nodeId text)");
-        db.execSQL("create table folders(name text)");
+        db.execSQL("create table BusBookMark (folder text, busnum text, stopname text, arrvcnt text, startnm text, endnm text)");
+        db.execSQL("create table folders (name text)");
     }
 
     @Override

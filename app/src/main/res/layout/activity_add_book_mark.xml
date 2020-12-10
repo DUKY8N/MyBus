@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="없음"
+            android:text="북마크"
             android:textSize="25dp"
             android:textStyle="bold" />
 

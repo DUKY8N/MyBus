@@ -52,6 +52,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
     String[] busNodeidList;
+    String[] nodeidList;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
         protected void onPostExecute(Document doc) {
 
             NodeList nodeList = doc.getElementsByTagName("item");
+            nodeidList = new String[nodeList.getLength()];
             idc = 0;
             boolean isBus;
 
@@ -123,6 +125,7 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
                 for(int j = 0; j < busNodeidList.length; ++j) {
                     if(s2.equals(busNodeidList[j])) isBus = true;
                 }
+                nodeidList[i] = nodeid.item(0).getChildNodes().item(0).getNodeValue();
 
                 idc++;
                 AddText(s1, idc, isBus, nodeId);
@@ -226,17 +229,15 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        ImageView add_v;
 
         for(int j = 1; j <= idc; j++){
             if(id == j){
-                Toast.makeText(getBaseContext(), j + "클릭 됨", Toast.LENGTH_SHORT).show();
-                add_v = (ImageView)findViewById(v.getId());
-                Intent it = new Intent(this, AddBookMark.class);
-                it.putExtra("routeId", routeId);
-                it.putExtra("nodeId", add_v.getTag().toString());
-                startActivity(it);
 
+                Intent it = new Intent(this, AddBookMark.class);
+                it.putExtra("cityCode", cityCode);
+                it.putExtra("routeId", routeId);
+                it.putExtra("nodeId", nodeidList[j]);
+                startActivity(it);
             }
         }
 

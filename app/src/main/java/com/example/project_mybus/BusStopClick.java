@@ -183,11 +183,6 @@ public class BusStopClick extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int id = v.getId();
 
-        for(int j = 1; j <= idc; j++){
-            if(id == j){
-                Toast.makeText(getBaseContext(), j + "클릭 됨", Toast.LENGTH_SHORT).show();
-            }
-        }
 
     }
 
