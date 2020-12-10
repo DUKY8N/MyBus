@@ -60,6 +60,7 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_book_mark);
+        overridePendingTransition(0,0);
 
         it = getIntent();
 
@@ -280,5 +281,11 @@ public class AddBookMark extends AppCompatActivity implements View.OnClickListen
 
             super.onPostExecute(doc);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        overridePendingTransition(0,0);
     }
 }

@@ -1,7 +1,9 @@
 package com.example.project_mybus;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-public class FolderClick extends AppCompatActivity implements View.OnClickListener {
+public class FolderClick extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     DBManager dbManager;
     SQLiteDatabase sqlitedb;
@@ -36,6 +38,7 @@ public class FolderClick extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_click);
+        overridePendingTransition(0,0);
 
         Intent it = getIntent();
         str_folder = it.getStringExtra("it_foldnm");
@@ -44,30 +47,7 @@ public class FolderClick extends AppCompatActivity implements View.OnClickListen
 
         foldnm_tv.setText(str_folder);
 
-        try {
-            idc = 0;
-            dbManager = new DBManager(this);
-            sqlitedb = dbManager.getReadableDatabase();
-            Cursor cursor = sqlitedb.query("BusBookMark", null, "folder = ?", new String[]{str_folder}, null, null, null);
-            while (cursor.moveToNext()) {
-                String busnum = cursor.getString(cursor.getColumnIndex("busnum"));
-                String cityid = cursor.getString(cursor.getColumnIndex("cityid"));
-                String startnm = cursor.getString(cursor.getColumnIndex("startnm"));
-                String endnm = cursor.getString(cursor.getColumnIndex("endnm"));
-                String routeId = cursor.getString(cursor.getColumnIndex("busid"));
-
-                busids.add(routeId);
-                citys.add(cityid);
-
-                idc++;
-                AddText(busnum, cityid, startnm, endnm, idc);
-            }
-            cursor.close();
-            sqlitedb.close();
-            dbManager.close();
-        } catch (SQLiteException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        Refrsh();
     }
 
     public void AddText(String busnum, String cityid, String startnm, String endnm, int id) {
@@ -127,6 +107,7 @@ public class FolderClick extends AppCompatActivity implements View.OnClickListen
         dynamicHori.addView(layout_tv);
         dynamicHori.setId(id);
         dynamicHori.setOnClickListener(this);
+        dynamicHori.setOnLongClickListener(this);
         dynamicLayout.addView(dynamicHori);
     }
 
@@ -141,6 +122,103 @@ public class FolderClick extends AppCompatActivity implements View.OnClickListen
                 intent5.putExtra("it_citycode", Integer.parseInt(citys.get(k-1).toString()));
                 startActivity(intent5);
             }
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        int id = v.getId();
+
+        for(int j = 1; j <= idc; j++){
+            if(id == j){
+                AlertDialog.Builder ad = new AlertDialog.Builder(FolderClick.this);
+
+                ad.setTitle("삭제");
+                ad.setMessage("삭제 하시겠습니까?");
+
+                final int finalJ = j;
+                ad.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                        // Event
+                        DBdel(str_folder, busids.get(finalJ-1).toString());
+                        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+                        dynamicLayout.removeAllViews();
+                        Refrsh();
+                    }
+                });
+
+                ad.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        // Event
+                    }
+                });
+                ad.show();
+            }
+        }
+        return false;
+    }
+
+    public void DBdel(String foldnm, String busid) {
+        try{
+            dbManager = new DBManager(this);
+            sqlitedb = dbManager.getReadableDatabase();
+            sqlitedb.execSQL("DELETE FROM BusBookMark WHERE (folder = '" + foldnm + "') AND (busid = " + "'" + busid + "'" + ")");
+            sqlitedb.close();
+            dbManager.close();
+        } catch (SQLiteException e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+        dynamicLayout.removeAllViews();
+        Refrsh();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        overridePendingTransition(0,0);
+    }
+
+    public void Refrsh() {
+        busnums = new ArrayList();
+        busids = new ArrayList();
+        citys = new ArrayList();
+        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+        dynamicLayout.removeAllViews();
+        try {
+            idc = 0;
+            dbManager = new DBManager(this);
+            sqlitedb = dbManager.getReadableDatabase();
+            Cursor cursor = sqlitedb.query("BusBookMark", null, "folder = ?", new String[]{str_folder}, null, null, null);
+            while (cursor.moveToNext()) {
+                String busnum = cursor.getString(cursor.getColumnIndex("busnum"));
+                String cityid = cursor.getString(cursor.getColumnIndex("cityid"));
+                String startnm = cursor.getString(cursor.getColumnIndex("startnm"));
+                String endnm = cursor.getString(cursor.getColumnIndex("endnm"));
+                String routeId = cursor.getString(cursor.getColumnIndex("busid"));
+
+                busids.add(routeId);
+                citys.add(cityid);
+
+                idc++;
+                AddText(busnum, cityid, startnm, endnm, idc);
+            }
+            cursor.close();
+            sqlitedb.close();
+            dbManager.close();
+        } catch (SQLiteException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

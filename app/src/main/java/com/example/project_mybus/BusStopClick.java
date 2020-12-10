@@ -191,4 +191,10 @@ public class BusStopClick extends AppCompatActivity implements View.OnClickListe
         dynamicLayout.removeAllViews();
         new GetXMLTask().execute();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        overridePendingTransition(0,0);
+    }
 }

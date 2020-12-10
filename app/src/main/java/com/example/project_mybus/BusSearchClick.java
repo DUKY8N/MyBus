@@ -239,6 +239,12 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        overridePendingTransition(0,0);
+    }
+
     public void Clickref (View v) {
         dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
         dynamicLayout.removeAllViews();

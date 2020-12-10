@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout dynamicHori;
     int idc;
     int idc_tv;
+    int count;
     ArrayList foldnms = new ArrayList();
     ArrayList busnums = new ArrayList();
     ArrayList busids = new ArrayList();
@@ -83,50 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fab2.setOnClickListener(this);
         fab3.setOnClickListener(this);
 
-        try {
-            idc = 0;
-            dbManager = new DBManager(this);
-            sqlitedb = dbManager.getReadableDatabase();
-            Cursor cursor = sqlitedb.query("folders", null, null, null, null, null, null);
-            while (cursor.moveToNext()) {
-                String foldnm = cursor.getString(cursor.getColumnIndex("name"));
-                foldnms.add(foldnm);
-                idc++;
-                AddFolder(foldnm, idc);
-            }
-            cursor.close();
-            sqlitedb.close();
-            dbManager.close();
-        } catch (SQLiteException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-        try {
-            idc_tv = 200;
-            dbManager = new DBManager(this);
-            sqlitedb = dbManager.getReadableDatabase();
-            String str_folder = "empty";
-            Cursor cursor = sqlitedb.query("BusBookMark", null, "folder = ?", new String[]{str_folder}, null, null, null);
-            while (cursor.moveToNext()) {
-                String busnum = cursor.getString(cursor.getColumnIndex("busnum"));
-                String cityid = cursor.getString(cursor.getColumnIndex("cityid"));
-                String startnm = cursor.getString(cursor.getColumnIndex("startnm"));
-                String endnm = cursor.getString(cursor.getColumnIndex("endnm"));
-                String routeId = cursor.getString(cursor.getColumnIndex("busid"));
-
-                busids.add(routeId);
-                citys.add(cityid);
-
-
-                idc_tv++;
-                AddText(busnum, cityid, startnm, endnm, idc_tv);
-            }
-            cursor.close();
-            sqlitedb.close();
-            dbManager.close();
-        } catch (SQLiteException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        Refrsh();
 
     }
 
@@ -176,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ImageView busicon_v = new ImageView(this);
         if((cityid.equals("37020")) || (cityid.equals("31230"))){
             busnum_tv.setText(busnum + "번 버스");
-            busnums.add(busnum+ "번 버스");
+            busnums.add(busnum  + "번 버스");
         }
         else {
             busnum_tv.setText(busnum);
@@ -294,6 +253,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Refrsh();
+    }
+
+    @Override
     public boolean onLongClick(View v) {
         int id = v.getId();
 
@@ -304,13 +269,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ad.setTitle("삭제");
                 ad.setMessage("삭제 하시겠습니까?");
 
+                final int finalJ = j;
                 ad.setPositiveButton("예", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                         dialog.dismiss();
                         // Event
-                        DBdel();
+                        DBdel(foldnms.get(finalJ -1).toString());
+                        Refrsh();
                     }
                 });
 
@@ -326,20 +293,136 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         for(int k = 201; k <= idc_tv; k++){
             if(id == k){
+                AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
 
+                ad.setTitle("삭제");
+                ad.setMessage("삭제 하시겠습니까?");
 
+                final int finalJ = k;
+                ad.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                        // Event
+                        DBdel2(busids.get(finalJ-201).toString());
+                        Refrsh();
+                    }
+                });
+
+                ad.setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        // Event
+                    }
+                });
+                ad.show();
             }
         }
 
         return false;
     }
 
-    public void DBdel() {
+    public void DBdel(String foldn) {
         try{
             dbManager = new DBManager(this);
             sqlitedb = dbManager.getReadableDatabase();
-            sqlitedb.delete("folders", "name = ?", new String[]{})
-
+            sqlitedb.delete("folders", "name = ?", new String[]{foldn});
+            sqlitedb.close();
+            dbManager.close();
+        } catch (SQLiteException e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+
+        try{
+            dbManager = new DBManager(this);
+            sqlitedb = dbManager.getReadableDatabase();
+            sqlitedb.delete("BusBookMark", "folder = ?", new String[]{foldn});
+            sqlitedb.close();
+            dbManager.close();
+        } catch (SQLiteException e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void DBdel2(String busid) {
+        try{
+            dbManager = new DBManager(this);
+            sqlitedb = dbManager.getReadableDatabase();
+            sqlitedb.execSQL("DELETE FROM BusBookMark WHERE (folder = 'empty') AND (busid = " + "'" + busid + "'" + ")");
+            sqlitedb.close();
+            dbManager.close();
+        } catch (SQLiteException e){
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void Refrsh() {
+        foldnms = new ArrayList();
+        busnums = new ArrayList();
+        busids = new ArrayList();
+        citys = new ArrayList();
+        dynamicLayout = (LinearLayout)findViewById(R.id.dynamicLayout);
+        dynamicLayout.removeAllViews();
+        try {
+            idc = 0;
+            dbManager = new DBManager(this);
+            sqlitedb = dbManager.getReadableDatabase();
+            Cursor cursor = sqlitedb.query("folders", null, null, null, null, null, null);
+            while (cursor.moveToNext()) {
+                String foldnm = cursor.getString(cursor.getColumnIndex("name"));
+                foldnms.add(foldnm);
+                idc++;
+                AddFolder(foldnm, idc);
+            }
+            cursor.close();
+            sqlitedb.close();
+            dbManager.close();
+        } catch (SQLiteException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        try {
+            idc_tv = 200;
+            dbManager = new DBManager(this);
+            sqlitedb = dbManager.getReadableDatabase();
+            String str_folder = "empty";
+            Cursor cursor = sqlitedb.query("BusBookMark", null, "folder = ?", new String[]{str_folder}, null, null, null);
+            while (cursor.moveToNext()) {
+                String busnum = cursor.getString(cursor.getColumnIndex("busnum"));
+                String cityid = cursor.getString(cursor.getColumnIndex("cityid"));
+                String startnm = cursor.getString(cursor.getColumnIndex("startnm"));
+                String endnm = cursor.getString(cursor.getColumnIndex("endnm"));
+                String routeId = cursor.getString(cursor.getColumnIndex("busid"));
+
+                busids.add(routeId);
+                citys.add(cityid);
+
+                idc_tv++;
+                AddText(busnum, cityid, startnm, endnm, idc_tv);
+            }
+            cursor.close();
+            sqlitedb.close();
+            dbManager.close();
+        } catch (SQLiteException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(event.getAction() == KeyEvent.ACTION_DOWN) {
+            if(keyCode == KeyEvent.KEYCODE_BACK) {
+                Toast.makeText(this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+                count++;
+                if(count > 1) {
+                    finish();
+                }
+            }
+        }
+        return true;
     }
 }
