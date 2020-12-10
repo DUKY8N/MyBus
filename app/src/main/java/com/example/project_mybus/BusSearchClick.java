@@ -52,7 +52,6 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
     LinearLayout dynamicLayout;
     LinearLayout dynamicHori;
     String[] busNodeidList;
-    String[] nodeidList;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +102,6 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
         protected void onPostExecute(Document doc) {
 
             NodeList nodeList = doc.getElementsByTagName("item");
-            nodeidList = new String[nodeList.getLength()];
             idc = 0;
             boolean isBus;
 
@@ -125,7 +123,6 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
                 for(int j = 0; j < busNodeidList.length; ++j) {
                     if(s2.equals(busNodeidList[j])) isBus = true;
                 }
-                nodeidList[i] = nodeid.item(0).getChildNodes().item(0).getNodeValue();
 
                 idc++;
                 AddText(s1, idc, isBus, nodeId);
@@ -236,7 +233,6 @@ public class BusSearchClick extends AppCompatActivity implements View.OnClickLis
                 Intent it = new Intent(this, AddBookMark.class);
                 it.putExtra("cityCode", cityCode);
                 it.putExtra("routeId", routeId);
-                it.putExtra("nodeId", nodeidList[j]);
                 startActivity(it);
             }
         }
