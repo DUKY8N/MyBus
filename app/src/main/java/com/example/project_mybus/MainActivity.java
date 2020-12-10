@@ -310,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         dialog.dismiss();
                         // Event
+                        DBdel();
                     }
                 });
 
@@ -331,5 +332,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return false;
+    }
+
+    public void DBdel() {
+        try{
+            dbManager = new DBManager(this);
+            sqlitedb = dbManager.getReadableDatabase();
+            sqlitedb.delete("folders", "name = ?", new String[]{})
+
+        }
     }
 }
