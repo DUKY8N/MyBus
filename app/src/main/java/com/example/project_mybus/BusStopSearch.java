@@ -324,9 +324,11 @@ public class BusStopSearch extends AppCompatActivity implements View.OnClickList
     public boolean onKeyDown(int keyCode, KeyEvent event){
         if(event.getAction() == KeyEvent.ACTION_DOWN) {
             if(keyCode == KeyEvent.KEYCODE_BACK) {
-                Toast.makeText(this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
                 count++;
-                if(count > 1) {
+                if(count == 1){
+                    Toast.makeText(this, "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+                }
+                else if(count > 1) {
                     finish();
                 }
             }
